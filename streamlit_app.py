@@ -67,42 +67,42 @@ st.markdown("""
 # Model configurations
 MODEL_CONFIGS = {
     'Random Forest': {
-        'accuracy': 95.2,
+        'accuracy': 80.2,
         'description': 'Random Forest uses multiple decision trees to provide robust predictions with high accuracy.',
         'type': 'ensemble'
     },
     'XGBoost': {
-        'accuracy': 94.8,
+        'accuracy': 55.8,
         'description': 'XGBoost is a gradient boosting algorithm known for excellent performance on tabular data.',
         'type': 'ensemble'
     },
     'Logistic Regression': {
-        'accuracy': 92.1,
+        'accuracy': 68.1,
         'description': 'Logistic Regression provides interpretable results with good performance for binary classification.',
         'type': 'linear'
     },
     'SVM': {
-        'accuracy': 91.5,
+        'accuracy': 59.5,
         'description': 'Support Vector Machine finds optimal decision boundaries for classification.',
         'type': 'kernel'
     },
     'KNN': {
-        'accuracy': 89.3,
+        'accuracy': 70.3,
         'description': 'K-Nearest Neighbors classifies based on similarity to neighboring data points.',
         'type': 'instance'
     },
     'Naive Bayes': {
-        'accuracy': 87.8,
+        'accuracy': 68.8,
         'description': 'Naive Bayes uses probabilistic approach assuming feature independence.',
         'type': 'probabilistic'
     },
     'Decision Tree': {
-        'accuracy': 86.4,
+        'accuracy': 58.4,
         'description': 'Decision Tree creates interpretable rules for classification decisions.',
         'type': 'tree'
     },
     'AdaBoost': {
-        'accuracy': 90.7,
+        'accuracy': 68.7,
         'description': 'AdaBoost combines weak learners to create a strong classifier.',
         'type': 'ensemble'
     }
