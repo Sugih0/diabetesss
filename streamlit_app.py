@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import time
 
-# Configure page
 st.set_page_config(
     page_title="Diabetes Risk Prediction System",
     page_icon="🏥",
@@ -11,7 +10,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling
 st.markdown("""
 <style>
     .main-header {
@@ -64,7 +62,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Model configurations
 MODEL_CONFIGS = {
     'Random Forest': {
         'accuracy': 80.2,
@@ -108,7 +105,6 @@ MODEL_CONFIGS = {
     }
 }
 
-# Risk factor thresholds
 RISK_THRESHOLDS = {
     'glucose': {'low': 100, 'high': 140},
     'blood_pressure': {'low': 80, 'high': 90},
@@ -119,7 +115,6 @@ RISK_THRESHOLDS = {
 }
 
 def get_risk_level(key, value):
-    """Determine risk level for a given parameter"""
     if key not in RISK_THRESHOLDS:
         return 'Normal'
     
@@ -132,57 +127,46 @@ def get_risk_level(key, value):
         return 'Low'
 
 def predict_diabetes(data):
-    """Simulate diabetes prediction based on risk factors"""
     risk_score = 0
     
-    # Glucose risk
     if data['glucose'] > 140:
         risk_score += 3
     elif data['glucose'] > 100:
         risk_score += 1
     
-    # BMI risk
     if data['bmi'] > 30:
         risk_score += 2
     elif data['bmi'] > 25:
         risk_score += 1
     
-    # Age risk
     if data['age'] > 65:
         risk_score += 2
     elif data['age'] > 45:
         risk_score += 1
     
-    # Blood pressure risk
     if data['blood_pressure'] > 90:
         risk_score += 1
     
-    # Pregnancy risk
     if data['pregnancies'] > 6:
         risk_score += 2
     elif data['pregnancies'] > 3:
         risk_score += 1
     
-    # Insulin risk
     if data['insulin'] > 200:
         risk_score += 1
     
-    # Pedigree function risk
     if data['pedigree'] > 1.0:
         risk_score += 2
     elif data['pedigree'] > 0.5:
         risk_score += 1
     
-    # Convert risk score to probability
     max_risk = 12
     diabetes_probability = min(risk_score / max_risk, 0.95)
     
-    # Add model-specific variation
     model_config = MODEL_CONFIGS[data['model']]
     model_variation = (model_config['accuracy'] - 85) / 100
     diabetes_probability *= (0.8 + model_variation)
     
-    # Ensure probability is between 0.05 and 0.95
     diabetes_probability = max(0.05, min(0.95, diabetes_probability))
     no_diabetes_probability = 1 - diabetes_probability
     
@@ -222,9 +206,7 @@ def create_simple_gauge(value, title):
     """
     return gauge_html
 
-# Main app
 def main():
-    # Header
     st.markdown("""
     <div class="main-header">
         <h1>🏥 Diabetes Risk Prediction System</h1>
@@ -232,10 +214,8 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    # Sidebar for inputs
     st.sidebar.header("👤 Patient Information")
     
-    # Input fields
     pregnancies = st.sidebar.number_input(
         "Pregnancies", 
         min_value=0, max_value=20, value=1,
@@ -291,9 +271,7 @@ def main():
         help="Choose the ML algorithm for prediction"
     )
     
-    # Predict button
     if st.sidebar.button("🔮 Predict Diabetes Risk", type="primary"):
-        # Prepare data
         patient_data = {
             'pregnancies': pregnancies,
             'glucose': glucose,
@@ -306,23 +284,18 @@ def main():
             'model': model_choice
         }
         
-        # Show loading
         with st.spinner('Analyzing patient data...'):
-            time.sleep(1.5)  # Simulate processing time
+            time.sleep(1.5) 
             
-        # Get prediction
         result = predict_diabetes(patient_data)
         
-        # Store results in session state
         st.session_state.prediction_result = result
         st.session_state.patient_data = patient_data
     
-    # Display results if available
     if hasattr(st.session_state, 'prediction_result'):
         result = st.session_state.prediction_result
         patient_data = st.session_state.patient_data
         
-        # Main results
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -339,36 +312,30 @@ def main():
             model_accuracy = MODEL_CONFIGS[patient_data['model']]['accuracy']
             st.metric("Model Accuracy", f"{model_accuracy}%")
         
-        # Detailed results
         st.subheader("📊 Detailed Analysis")
         
         col1, col2 = st.columns(2)
         
         with col1:
-            # Probability gauges
             st.subheader("Risk Probabilities")
             
-            # Simple gauge for diabetes risk
             diabetes_gauge_html = create_simple_gauge(
                 result['diabetes_prob'], 
                 "Diabetes Risk"
             )
             st.markdown(diabetes_gauge_html, unsafe_allow_html=True)
             
-            # Probability breakdown
             st.write("**Probability Breakdown:**")
             st.write(f"• No Diabetes: {result['no_diabetes_prob']:.1%}")
             st.write(f"• Diabetes: {result['diabetes_prob']:.1%}")
         
         with col2:
-            # Risk factors analysis using bar chart
             st.subheader("Risk Factors Analysis")
             
             factors = ['Glucose', 'BMI', 'Blood Pressure', 'Age', 'Pregnancies', 'Insulin']
             values = [patient_data['glucose'], patient_data['bmi'], patient_data['blood_pressure'], 
                       patient_data['age'], patient_data['pregnancies'], patient_data['insulin']]
             
-            # Create DataFrame for chart
             chart_data = pd.DataFrame({
                 'Factor': factors,
                 'Value': values
@@ -376,7 +343,6 @@ def main():
             
             st.bar_chart(chart_data.set_index('Factor'))
         
-        # Model information
         st.subheader("🤖 Model Information")
         model_config = MODEL_CONFIGS[patient_data['model']]
         
@@ -390,7 +356,6 @@ def main():
             st.write("**Model Description:**")
             st.write(model_config['description'])
         
-        # Risk factors table
         st.subheader("🎯 Risk Factor Analysis")
         
         risk_data = []
@@ -413,7 +378,6 @@ def main():
         
         df_risk = pd.DataFrame(risk_data)
         
-        # Style the dataframe
         def style_risk_level(val):
             if val == 'High':
                 return 'color: #e53e3e; font-weight: bold'
@@ -425,10 +389,8 @@ def main():
         styled_df = df_risk.style.applymap(style_risk_level, subset=['Risk Level'])
         st.dataframe(styled_df, use_container_width=True, hide_index=True)
         
-        # Export results
         st.subheader("💾 Export Results")
         
-        # Create summary for export
         summary_data = {
             'Patient_ID': 'P001',
             'Prediction': 'High Risk' if result['prediction'] == 1 else 'Low Risk',
@@ -460,14 +422,12 @@ def main():
                 mime="application/json"
             )
     
-    # Disclaimer
     st.markdown("""
     <div class="disclaimer">
         <strong>⚠️ Medical Disclaimer:</strong> This tool is for educational purposes only and should not replace professional medical advice. Please consult with a healthcare provider for proper diagnosis and treatment.
     </div>
     """, unsafe_allow_html=True)
     
-    # Additional features in sidebar
     st.sidebar.markdown("---")
     st.sidebar.subheader("📋 Batch Prediction")
     
@@ -483,7 +443,6 @@ def main():
             st.sidebar.success(f"Loaded {len(batch_df)} records")
             
             if st.sidebar.button("🔄 Process Batch"):
-                # Process batch predictions
                 batch_results = []
                 
                 progress_bar = st.progress(0)
@@ -494,7 +453,6 @@ def main():
                     progress_bar.progress(progress)
                     status_text.text(f"Processing record {idx + 1} of {len(batch_df)}")
                     
-                    # Prepare data for prediction
                     row_data = {
                         'pregnancies': row.get('pregnancies', 1),
                         'glucose': row.get('glucose', 120),
@@ -518,12 +476,10 @@ def main():
                 progress_bar.empty()
                 status_text.empty()
                 
-                # Display batch results
                 st.subheader("📊 Batch Prediction Results")
                 batch_results_df = pd.DataFrame(batch_results)
                 st.dataframe(batch_results_df, use_container_width=True)
                 
-                # Download batch results
                 csv_batch = batch_results_df.to_csv(index=False)
                 st.download_button(
                     label="📄 Download Batch Results",
